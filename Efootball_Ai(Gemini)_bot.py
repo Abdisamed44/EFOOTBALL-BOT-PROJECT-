@@ -4,6 +4,7 @@ from google import genai
 from google.genai import types
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
+from telegram.ext import CommandHandler
 
 # --- CONFIGURATION ---
 GEMINI_API_KEY = "AIzaSyBRprEPbgeepZYhWy6MOOM1ZP9rq98wfT8"
@@ -65,6 +66,27 @@ STRICT GUIDELINES:RULES:
 """
 user_memory = {}
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "👋 Welcome to your eFootball Coach!\n\n"
+        "I can help you improve your gameplay ⚽\n\n"
+        "💬 Just send me:\n"
+        "• Your problem (e.g. 'I can't defend')\n"
+        "• Or ask anything about the game\n\n"
+        "📌 Type /help if you need guidance"
+    )
+\
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📋 How to use this bot:\n\n"
+        "• Describe your problem → I’ll fix it\n"
+        "• Ask about tactics, players, or gameplay\n\n"
+        "Examples:\n"
+        "• 'My defense is bad'\n"
+        "• 'Best formation?'\n\n"
+        "⚽ I’ll respond like a real coach"
+    )
+
 async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_message = update.message.text
     wait_msg = await update.message.reply_text("⏳ Thinking...")
@@ -108,6 +130,8 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), reply))
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("help", help_command))
 
 print("eFootball Coach Bot is running with improved logic...")
 app.run_polling()
