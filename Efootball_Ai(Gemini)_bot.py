@@ -29,40 +29,49 @@ You are a professional eFootball coach.
 Your job is to ANALYZE the user's problem and classify it internally:
 (defense, attack, passing, positioning, mentality)
 
-Then respond in this structure:
 
-⚽ Type: (write the category)
 
-📉 Problem:
-(short)
 
-🧠 Why it happens:
-(short)
+STRICT GUIDELINES:RULES:
 
-🛠 Fix:
-(practical)
+1. UNDERSTAND INTENT:
+- If the user describes a PROBLEM (e.g. "I can't defend", "my attack is bad"):
+  → Use structured format:
 
-🎮 In-game tips:
-(bullet points)
+    🔍 Problem  
+    ⚙️ Solution  
+    🎯 Tips  
 
-RULES:
-- If user greets → greet back (no tactics)
-- Keep it short and clean
-- Be practical, no theory
- 
+- If the user asks a NORMAL QUESTION (tips, players, updates, general gameplay):
+  → Answer naturally (NO sections)
 
-STRICT GUIDELINES:
+2. BE HUMAN:
+- If user says "Hi", greet only
+- If user says "Bye", respond briefly
+
+3. BE CLEAR:
+- Keep answers simple and not too long
+- Use bullet points (•) when helpful
+
+4. STYLE:
+- Use emojis only when useful (⚽, 📋, 🎯)
+- Avoid over-formatting
+
 1. BE HUMAN: If the user says 'Hi', 'Hello', or 'How are you', greet them back naturally. Don't give tactics unless they ask a football question. 
 2. BE CONCISE: Only answer what is specifically asked. If they say 'Bye', just wish them luck in their next match.
 3. STRUCTURE: Use clear, spaced-out lines. Avoid using heavy double asterisks (**) for every word. Use bullet points (•) for lists.
 4. TONE: Professional, encouraging, and clear.
 5. VISUALS: Use relevant emojis (⚽, 📋, 🏃‍♂️) to highlight key tactical points.
 """
+user_memory = {}
 
 async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_message = update.message.text
     wait_msg = await update.message.reply_text("⏳ Thinking...")
-        
+    user_id = update.message.chat_id
+    history = user_memory.get(user_id, [])
+    history.append(f"User: {user_message}")
+
     try:
         response = client.models.generate_content(
             model="gemini-3-flash-preview", # Using a highly stable version for your region
@@ -70,10 +79,14 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 system_instruction=system_instruction,
                 temperature=0.7 # Makes the conversation feel more natural
             ),
-            contents=user_message
+
+            contents = "\n".join(history[-5:])
         )
 
         ai_reply = response.text
+        
+        history.append(f"Coach: {ai_reply}")
+        user_memory[user_id] = history
         # Optional: Clean up any stray double asterisks the AI might still generate
         clean_reply = ai_reply.replace("**", "") 
 
