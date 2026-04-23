@@ -7,13 +7,14 @@ from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTyp
 from telegram.ext import CommandHandler
 
 # --- CONFIGURATION ---
+import os
+
 GEMINI_API_KEY = os.getenv("AIzaSyBRprEPbgeepZYhWy6MOOM1ZP9rq98wfT8")
 TELEGRAM_TOKEN = os.getenv("8747420569:AAEj8iQMmQpIMqZ-9CErjXIJj2QM39Fr684")
-
 # Initialize the Client with Automatic Retries
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-# --- IMPROVED SYSTEM PROMPT ---
+# --- IMPROVED SYSTEM PROMPT ---AIzaSyBRprEPbgeepZYhWy6MOOM1ZP9rq98wfT8
 system_instruction = """
 
 You are a professional eFootball coach.
