@@ -12,14 +12,7 @@ TELEGRAM_TOKEN = os.getenv("8747420569:AAEj8iQMmQpIMqZ-9CErjXIJj2QM39Fr684")
 
 # Initialize the Client with Automatic Retries
 client = genai.Client(
-    api_key=GEMINI_API_KEY,
-    http_options=types.HttpOptions(
-        retry_options=types.HttpRetryOptions(
-            attempts=3,
-            initial_delay=2.0,
-            http_status_codes=[429, 503] # Added 503 for high demand
-        )
-    )
+    api_key=GEMINI_API_KEY
 )
 
 # --- IMPROVED SYSTEM PROMPT ---
