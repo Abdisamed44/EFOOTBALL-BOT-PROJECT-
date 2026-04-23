@@ -5,9 +5,11 @@ from google.genai import types
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 from telegram.ext import CommandHandler
+from dotenv import load_dotenv
 
+load_dotenv()
 # --- CONFIGURATION ---
-import os
+
 
 GEMINI_API_KEY = os.getenv("AIzaSyBRprEPbgeepZYhWy6MOOM1ZP9rq98wfT8")
 TELEGRAM_TOKEN = os.getenv("8747420569:AAEj8iQMmQpIMqZ-9CErjXIJj2QM39Fr684")
@@ -119,6 +121,11 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             print(f"Error: {e}")
             await update.message.reply_text("⚽ Coach is currently reviewing the match tapes. Try again in a moment!")
+
+
+print("TOKEN VALUE:", TELEGRAM_TOKEN)
+print("TYPE:", type(TELEGRAM_TOKEN))
+print("GEMINI KEY:", os.getenv("GEMINI_API_KEY"))
 
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), reply))
