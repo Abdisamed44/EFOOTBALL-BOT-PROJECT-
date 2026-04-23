@@ -1,1 +1,1 @@
-worker: python Efootball_Ai(Gemini)_bot.py
+worker: python "Efootball_Ai(Gemini)_bot.py"
