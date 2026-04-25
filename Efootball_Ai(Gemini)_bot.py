@@ -11,7 +11,6 @@ def load_env():
 load_env()
 
 
-#from dotenv import load_dotenv
 import logging
 import asyncio
 from google import genai
