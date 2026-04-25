@@ -1,18 +1,37 @@
-import asyncio
 import os
+
+def load_env():
+    with open(".env", "r") as f:
+        for line in f:
+            line = line.strip()
+            if "=" in line and not line.startswith("#"):
+                key, value = line.split("=", 1)
+                os.environ[key.strip()] = value.strip()
+
+load_env()
+
+
+from dotenv import load_dotenv
+import logging
+import asyncio
 from google import genai
 from google.genai import types
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 from telegram.ext import CommandHandler
-from dotenv import load_dotenv
+import inspect
+#print("RUNNING FILE:", __file__)
 
-load_dotenv()
-# --- CONFIGURATION ---
+#print("TOKEN RAW:", repr(os.getenv("TELEGRAM_TOKEN")))
 
 
-GEMINI_API_KEY = os.getenv("AIzaSyBRprEPbgeepZYhWy6MOOM1ZP9rq98wfT8")
-TELEGRAM_TOKEN = os.getenv("8747420569:AAEj8iQMmQpIMqZ-9CErjXIJj2QM39Fr684")
+TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+
+
+
+logging.basicConfig(level=logging.INFO)
+# --- CONFIGURATION --- #
 # Initialize the Client with Automatic Retries
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -123,9 +142,7 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("⚽ Coach is currently reviewing the match tapes. Try again in a moment!")
 
 
-print("TOKEN VALUE:", TELEGRAM_TOKEN)
-print("TYPE:", type(TELEGRAM_TOKEN))
-print("GEMINI KEY:", os.getenv("GEMINI_API_KEY"))
+
 
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), reply))
