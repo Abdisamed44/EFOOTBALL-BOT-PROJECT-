@@ -161,6 +161,7 @@ app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), reply))
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("help", help_command))
+print(f"Total Users: {len(users)}")
 
 print("eFootball Coach Bot is running with improved logic...")
 app.run_polling()
