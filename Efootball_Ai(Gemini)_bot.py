@@ -1,5 +1,5 @@
 import os
-
+import json
 def load_env():
     with open(".env", "r") as f:
         for line in f:
@@ -10,6 +10,13 @@ def load_env():
 
 load_env()
 
+USERS_FILE = "users.json"
+
+if os.path.exists(USERS_FILE):
+    with open(USERS_FILE, "r") as f:
+        users = set(json.load(f))
+else:
+    users = set()
 
 import logging
 import asyncio
@@ -105,6 +112,13 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.chat_id
     history = user_memory.get(user_id, [])
     history.append(f"User: {user_message}")
+    
+    user_id = update.effective_user.id
+
+    users.add(user_id)
+
+    with open(USERS_FILE, "w") as f:
+        json.dump(list(users), f)
 
     try:
         response = client.models.generate_content(
