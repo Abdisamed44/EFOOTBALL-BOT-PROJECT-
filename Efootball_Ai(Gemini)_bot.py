@@ -10,13 +10,19 @@ def load_env():
 
 load_env()
 
+
 USERS_FILE = "users.json"
 
-if os.path.exists(USERS_FILE):
-    with open(USERS_FILE, "r") as f:
-        users = set(json.load(f))
-else:
-    users = set()
+def load_users():
+    if os.path.exists(USERS_FILE):
+        try:
+            with open(USERS_FILE, "r") as f:
+                return set(json.load(f))
+        except:
+            return set()
+    return set()
+
+users = load_users()
 
 import logging
 import asyncio
@@ -85,6 +91,10 @@ STRICT GUIDELINES:RULES:
 """
 user_memory = {}
 
+def save_users():
+    with open(USERS_FILE, "w") as f:
+        json.dump(list(users), f)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "👋 Welcome to your eFootball Coach!\n\n"
@@ -116,10 +126,10 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     users.add(user_id)
+    save_users()
 
-    with open(USERS_FILE, "w") as f:
-        json.dump(list(users), f)
-
+    print("TOTAL USERS:", len(users))
+    
     try:
         response = client.models.generate_content(
             model="gemini-3-flash-preview", # Using a highly stable version for your region
